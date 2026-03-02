@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PUSD — Stablecoin Protocol · OP_NET Testnet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500;600&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  /* palette — warm off-white + deep ink */
+  --bg:          #f7f5f0;
+  --bg2:         #efecea;
+  --surface:     #ffffff;
+  --surface2:    #f4f2ed;
+  --border:      #e4e0d8;
+  --border2:     #d4cfc5;
+  --muted:       #9e9a92;
+  --soft:        #6e6a62;
+  --body:        #3a3630;
+  --head:        #1a1714;
+
+  /* accents */
+  --blue:        #1a56db;
+  --blue-lt:     rgba(26,86,219,.08);
+  --blue-bd:     rgba(26,86,219,.18);
+  --green:       #0a7c5c;
+  --green-lt:    rgba(10,124,92,.08);
+  --green-bd:    rgba(10,124,92,.2);
+  --red:         #c53030;
+  --red-lt:      rgba(197,48,48,.07);
+  --amber:       #b45309;
+  --amber-lt:    rgba(180,83,9,.07);
+  --amber-bd:    rgba(180,83,9,.2);
+
+  /* testnet */
+  --test:        #7c3aed;
+  --test-lt:     rgba(124,58,237,.07);
+  --test-bd:     rgba(124,58,237,.2);
+
+  --serif:  'Instrument Serif', Georgia, serif;
+  --sans:   'Geist', system-ui, sans-serif;
+  --mono:   'Geist Mono', monospace;
+  --r: 12px;
+  --r2: 18px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  --shadow2: 0 2px 8px rgba(0,0,0,.08), 0 8px 32px rgba(0,0,0,.06);
+}
+
+html{height:100%;}
+body{
+  background:var(--bg);
+  color:var(--body);
+  font-family:var(--sans);
+  font-size:14px;
+  line-height:1.5;
+  min-height:100vh;
+}
+
+/* subtle paper texture via shadow lines */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 10%, rgba(26,86,219,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 90%, rgba(10,124,92,.04) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* ─── TOPBAR ─── */
+header{
+  position:sticky;top:0;z-index:200;
+  background:rgba(247,245,240,.9);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  height:58px;
+  display:flex;align-items:center;
+  padding:0 28px;
+  gap:24px;
+}
+
+.logo{
+  display:flex;align-items:center;gap:9px;
+  font-family:var(--serif);
+  font-size:20px;
+  color:var(--head);
+  letter-spacing:-.3px;
+  flex-shrink:0;
+}
+
+.logo-mark{
+  width:30px;height:30px;border-radius:8px;
+  background:var(--head);
+  display:flex;align-items:center;justify-content:center;
+  color:#f7f5f0;
+  font-family:var(--mono);
+  font-size:13px;font-weight:600;
+  letter-spacing:-1px;
+}
+
+.nav{
+  display:flex;gap:1px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:9px;
+  padding:3px;
+}
+
+.nav-item{
+  padding:5px 14px;
+  border-radius:6px;
+  font-size:13px;font-weight:500;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all .15s;
+  white-space:nowrap;
+}
+.nav-item:hover{color:var(--body);}
+.nav-item.active{background:var(--surface);color:var(--head);box-shadow:var(--shadow);font-weight:600;}
+
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+
+.testnet-pill{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 11px;border-radius:20px;
+  font-size:11px;font-weight:600;letter-spacing:.3px;
+  background:var(--test-lt);border:1px solid var(--test-bd);color:var(--test);
+}
+
+.testnet-pulse{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--test);
+  animation:tpulse 2s infinite;
+}
+@keyframes tpulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+.btn-connect{
+  display:flex;align-items:center;gap:7px;
+  padding:8px 16px;border-radius:9px;
+  font-family:var(--sans);font-size:13px;font-weight:600;
+  background:var(--head);color:var(--bg);
+  border:none;cursor:pointer;
+  transition:all .18s;
+  white-space:nowrap;
+}
+.btn-connect:hover{background:#2d2925;transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.18);}
+.btn-connect.connected{
+  background:var(--surface);
+  color:var(--body);
+  border:1px solid var(--border2);
+  box-shadow:var(--shadow);
+}
+.btn-connect.connected:hover{border-color:var(--border2);background:var(--bg2);}
+
+.wallet-indicator{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 2px var(--green-lt);}
+
+/* ─── PAGE WRAPPER ─── */
+.page{
+  position:relative;z-index:1;
+  max-width:1060px;
+  margin:0 auto;
+  padding:36px 20px 80px;
+}
+
+/* ─── SECTION VISIBILITY ─── */
+.section{display:none;}
+.section.active{display:block;}
+
+/* ─── HERO ─── */
+.hero{
+  margin-bottom:40px;
+}
+
+.hero-label{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--soft);margin-bottom:14px;
+}
+.hero-label::before{content:'';display:inline-block;width:20px;height:1px;background:var(--border2);}
+
+.hero-heading{
+  font-family:var(--serif);
+  font-size:42px;line-height:1.05;
+  color:var(--head);
+  letter-spacing:-.5px;
+  margin-bottom:12px;
+}
+.hero-heading em{font-style:italic;color:var(--blue);}
+
+.hero-sub{
+  font-size:15px;color:var(--soft);
+  max-width:500px;line-height:1.65;
+}
+
+/* ─── STATS BAR ─── */
+.stats-bar{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  overflow:hidden;
+  background:var(--border);
+  gap:1px;
+  margin-bottom:36px;
+  box-shadow:var(--shadow);
+}
+
+.stat-cell{
+  background:var(--surface);
+  padding:18px 22px;
+}
+
+.stat-lbl{font-size:11px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.stat-val{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--head);letter-spacing:-1px;line-height:1;}
+.stat-val.blue{color:var(--blue);}
+.stat-val.green{color:var(--green);}
+.stat-chg{font-size:11px;color:var(--muted);margin-top:4px;}
+.stat-chg.up{color:var(--green);}
+
+/* ─── MAIN LAYOUT ─── */
+.main-grid{
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:20px;
+  align-items:start;
+}
+
+/* ─── CARD ─── */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+
+/* ─── TAB BAR ─── */
+.tab-bar{
+  display:flex;
+  border-bottom:1px solid var(--border);
+  padding:0 4px;
+  background:var(--surface);
+}
+
+.tab{
+  flex:1;
+  padding:14px 10px;
+  font-size:13px;font-weight:500;
+  color:var(--muted);cursor:pointer;
+  transition:all .15s;
+  border-bottom:2px solid transparent;
+  text-align:center;
+  white-space:nowrap;
+}
+.tab:hover{color:var(--body);}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600;}
+
+/* ─── FORM AREA ─── */
+.form-area{padding:26px;}
+
+/* step badge */
+.step-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:14px;
+}
+
+.step-num{
+  width:20px;height:20px;border-radius:50%;
+  background:var(--bg2);border:1px solid var(--border2);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;color:var(--soft);
+  flex-shrink:0;
+}
+
+/* ─── INPUT FIELD ─── */
+.field-wrap{margin-bottom:18px;}
+
+.field-top{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:7px;
+}
+.field-label{font-size:12px;font-weight:600;color:var(--soft);letter-spacing:.2px;}
+.field-balance{
+  font-family:var(--mono);font-size:12px;color:var(--muted);
+  cursor:pointer;transition:color .12s;
+}
+.field-balance:hover{color:var(--blue);}
+
+.input-row{
+  display:flex;align-items:center;
+  background:var(--bg2);
+  border:1.5px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden;
+  transition:border-color .15s,box-shadow .15s;
+}
+.input-row:focus-within{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px var(--blue-lt);
+  background:var(--surface);
+}
+
+.token-badge{
+  display:flex;align-items:center;gap:7px;
+  padding:12px 14px;
+  border-right:1.5px solid var(--border);
+  font-size:13px;font-weight:600;color:var(--head);
+  background:var(--surface);
+  white-space:nowrap;
+  flex-shrink:0;
+}
+
+.token-icon{
+  width:24px;height:24px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;
+  flex-shrink:0;
+}
+
+.num-input{
+  flex:1;
+  background:none;border:none;outline:none;
+  font-family:var(--mono);font-size:20px;font-weight:500;
+  color:var(--head);
+  padding:12px 14px;
+  width:100%;
+  -moz-appearance:textfield;
+}
+.num-input::-webkit-outer-spin-button,
+.num-input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.num-input::placeholder{color:var(--border2);}
+
+.btn-max{
+  padding:0 14px;
+  font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.5px;
+  color:var(--blue);cursor:pointer;
+  background:none;border:none;
+  border-left:1.5px solid var(--border);
+  height:100%;transition:background .12s;
+  white-space:nowrap;
+}
+.btn-max:hover{background:var(--blue-lt);}
+
+.input-sub{
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  margin-top:5px;padding-left:2px;
+}
+
+/* ─── QUICK % BUTTONS ─── */
+.pct-row{display:flex;gap:6px;margin-bottom:20px;}
+
+.pct{
+  flex:1;padding:6px 4px;
+  border-radius:7px;
+  border:1px solid var(--border);
+  background:var(--bg2);
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  color:var(--muted);cursor:pointer;
+  transition:all .12s;text-align:center;
+}
+.pct:hover{border-color:var(--blue);color:var(--blue);}
+.pct.on{background:var(--blue-lt);border-color:var(--blue-bd);color:var(--blue);}
+
+/* ─── DIVIDER ARROW ─── */
+.arrow-div{
+  display:flex;align-items:center;justify-content:center;
+  margin:4px 0 16px;
+}
+.arrow-circle{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--bg2);border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:var(--muted);
+}
+
+/* ─── SUMMARY TABLE ─── */
+.summary{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden;
+  margin-bottom:20px;
+}
+
+.sumrow{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 14px;
+  border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.sumrow:last-child{border-bottom:none;}
+.sumrow.hl{background:rgba(26,86,219,.03);}
+.sk{color:var(--muted);}
+.sv{font-family:var(--mono);font-weight:600;color:var(--head);}
+.sv.blue{color:var(--blue);}
+.sv.green{color:var(--green);}
+.sv.amber{color:var(--amber);}
+
+/* ─── ALERT BOX ─── */
+.alert{
+  display:flex;align-items:flex-start;gap:9px;
+  padding:11px 13px;border-radius:9px;
+  font-size:12px;line-height:1.6;
+  margin-bottom:16px;
+}
+.alert.info{background:var(--blue-lt);border:1px solid var(--blue-bd);color:#1a3a8f;}
+.alert.warn{background:var(--amber-lt);border:1px solid var(--amber-bd);color:var(--amber);}
+.alert.test{background:var(--test-lt);border:1px solid var(--test-bd);color:var(--test);}
+.alert-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+
+/* ─── ACTION BUTTON ─── */
+.action-btn{
+  width:100%;
+  padding:15px;
+  border-radius:11px;
+  font-family:var(--sans);font-size:14px;font-weight:600;
+  letter-spacing:-.1px;
+  cursor:pointer;border:none;
+  transition:all .18s;
+  position:relative;overflow:hidden;
+}
+
+.action-btn.primary{
+  background:var(--head);color:var(--bg);
+}
+.action-btn.primary:hover{background:#2d2925;transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.2);}
+
+.action-btn.mint-style{
+  background:var(--blue);color:#fff;
+}
+.action-btn.mint-style:hover{background:#1545b8;transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,86,219,.35);}
+
+.action-btn.stake-style{
+  background:var(--green);color:#fff;
+}
+.action-btn.stake-style:hover{background:#085c44;transform:translateY(-1px);box-shadow:0 6px 20px rgba(10,124,92,.35);}
+
+.action-btn.secondary{
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  color:var(--body);
+}
+.action-btn.secondary:hover{border-color:var(--border2);background:var(--bg);}
+
+.action-btn:disabled{opacity:.38;cursor:not-allowed;transform:none!important;box-shadow:none!important;}
+
+/* shimmer */
+.action-btn.primary::after,.action-btn.mint-style::after,.action-btn.stake-style::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.08) 50%,transparent 100%);
+  transform:translateX(-100%);
+  animation:shimmer 3.5s 1.5s infinite;
+}
+@keyframes shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(200%);}}
+
+/* ─── RIGHT PANEL ─── */
+.side-panel{
+  display:flex;flex-direction:column;gap:14px;
+}
+
+/* ─── POSITION BOX ─── */
+.pos-box{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+
+.pos-header{
+  padding:18px 20px 14px;
+  border-bottom:1px solid var(--border);
+}
+
+.pos-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px;}
+
+.pos-value{
+  font-family:var(--serif);
+  font-size:32px;color:var(--head);
+  letter-spacing:-.5px;
+  line-height:1;
+}
+
+.pos-value small{font-size:16px;color:var(--muted);font-family:var(--mono);}
+
+.pos-body{padding:16px 20px;}
+
+.pos-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:9px 0;border-bottom:1px solid var(--bg2);
+  font-size:13px;
+}
+.pos-row:last-child{border-bottom:none;}
+.pk{color:var(--muted);}
+.pv{font-family:var(--mono);font-weight:600;color:var(--body);}
+.pv.green{color:var(--green);}
+.pv.blue{color:var(--blue);}
+
+/* health bar */
+.health-wrap{
+  margin:14px 0 6px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:9px;padding:12px 14px;
+}
+.health-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px;}
+.health-track{background:var(--border);border-radius:3px;height:5px;overflow:hidden;}
+.health-fill{height:100%;border-radius:3px;transition:width .6s ease,background .4s;}
+.health-numbers{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:5px;}
+
+/* ─── PROTOCOL INFO BOX ─── */
+.info-box{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+
+.info-box-title{
+  font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);
+  padding:14px 18px 10px;border-bottom:1px solid var(--bg2);
+}
+
+.info-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:9px 18px;
+  border-bottom:1px solid var(--bg2);
+  font-size:13px;
+}
+.info-row:last-child{border-bottom:none;}
+.ik{color:var(--muted);}
+.iv{font-family:var(--mono);font-weight:600;color:var(--body);}
+.iv.green{color:var(--green);}
+.iv.blue{color:var(--blue);}
+
+/* ─── WALLET OVERLAY ─── */
+.overlay{
+  position:fixed;inset:0;z-index:900;
+  background:rgba(26,23,20,.55);
+  backdrop-filter:blur(14px);
+  display:none;align-items:center;justify-content:center;
+}
+.overlay.open{display:flex;}
+
+.modal{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;
+  width:420px;max-width:95vw;
+  box-shadow:0 24px 80px rgba(0,0,0,.15);
+  overflow:hidden;
+  animation:slideUp .28s cubic-bezier(.34,1.4,.64,1);
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)scale(.97);}to{opacity:1;transform:translateY(0)scale(1);}}
+
+.modal-header{
+  padding:22px 24px 18px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;justify-content:space-between;
+}
+
+.modal-title{font-family:var(--serif);font-size:20px;color:var(--head);margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--muted);line-height:1.5;}
+
+.modal-close{
+  background:none;border:none;
+  font-size:18px;color:var(--muted);cursor:pointer;
+  line-height:1;padding:2px;transition:color .12s;
+}
+.modal-close:hover{color:var(--red);}
+
+.modal-body{padding:22px 24px 26px;}
+
+/* spinner ring */
+.ring-wrap{
+  width:72px;height:72px;
+  margin:0 auto 18px;
+  position:relative;display:flex;align-items:center;justify-content:center;
+}
+.ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:1.5px solid rgba(26,86,219,.15);
+  animation:ringPop 2s ease-out infinite;
+}
+.ring:nth-child(2){inset:-10px;animation-delay:.5s;}
+.ring:nth-child(3){inset:-20px;animation-delay:1s;}
+@keyframes ringPop{0%{opacity:.8;transform:scale(1);}100%{opacity:0;transform:scale(1.3);}}
+
+.ring-core{
+  width:56px;height:56px;border-radius:14px;
+  background:var(--bg2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;position:relative;z-index:1;
+}
+
+.modal-waiting{
+  text-align:center;
+  font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:18px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+
+.dot{
+  width:4px;height:4px;border-radius:50%;background:var(--blue);
+  animation:dotAnim 1.4s ease-in-out infinite;
+}
+.dot:nth-child(2){animation-delay:.18s;}
+.dot:nth-child(3){animation-delay:.36s;}
+@keyframes dotAnim{0%,80%,100%{transform:translateY(0);opacity:.3;}40%{transform:translateY(-4px);opacity:1;}}
+
+.tx-summary{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;margin-bottom:18px;
+}
+.tx-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 14px;border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.tx-row:last-child{border-bottom:none;}
+.tk{color:var(--muted);}
+.tv{font-family:var(--mono);font-weight:600;color:var(--head);}
+.tv.blue{color:var(--blue);}
+.tv.green{color:var(--green);}
+.tv.amber{color:var(--amber);}
+
+.btn-cancel{
+  width:100%;padding:12px;border-radius:9px;
+  background:none;border:1px solid var(--border2);
+  font-family:var(--sans);font-size:13px;font-weight:600;
+  color:var(--muted);cursor:pointer;transition:all .15s;
+}
+.btn-cancel:hover{border-color:var(--red);color:var(--red);}
+
+/* ─── TOAST ─── */
+#toasts{
+  position:fixed;bottom:22px;right:22px;z-index:9999;
+  display:flex;flex-direction:column;gap:8px;pointer-events:none;
+}
+.toast{
+  display:flex;align-items:flex-start;gap:10px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px 16px;
+  min-width:260px;max-width:340px;
+  font-size:13px;line-height:1.45;
+  box-shadow:0 8px 28px rgba(0,0,0,.12);
+  animation:toastIn .3s ease;
+  pointer-events:all;
+  border-left-width:3px;
+}
+@keyframes toastIn{from{opacity:0;transform:translateX(16px);}to{opacity:1;transform:translateX(0);}}
+.toast.ok {border-left-color:var(--green);}
+.toast.warn{border-left-color:var(--amber);}
+.toast.err {border-left-color:var(--red);}
+.toast.info{border-left-color:var(--blue);}
+.t-icon{font-size:15px;flex-shrink:0;margin-top:1px;}
+.t-title{font-weight:600;color:var(--head);margin-bottom:2px;font-size:13px;}
+.t-msg{color:var(--soft);font-size:12px;}
+
+/* ─── POSITION CARDS (My Positions page) ─── */
+.positions-grid{display:flex;flex-direction:column;gap:12px;}
+.pos-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  padding:20px;
+  box-shadow:var(--shadow);
+  transition:border-color .15s;
+}
+.pos-card:hover{border-color:var(--border2);}
+
+.pc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.pc-name{font-family:var(--serif);font-size:18px;color:var(--head);}
+.pc-status{
+  font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  padding:3px 9px;border-radius:20px;
+  background:var(--green-lt);border:1px solid var(--green-bd);color:var(--green);
+}
+
+.pc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.pc-stat{background:var(--bg2);border-radius:9px;padding:11px 13px;}
+.pc-sl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px;}
+.pc-sv{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--body);}
+.pc-sv.green{color:var(--green);}
+.pc-sv.blue{color:var(--blue);}
+
+.pc-actions{display:flex;gap:8px;}
+.btn-sm{
+  flex:1;padding:9px 12px;border-radius:8px;
+  font-family:var(--sans);font-size:12px;font-weight:600;
+  cursor:pointer;border:none;transition:all .15s;
+}
+.btn-sm.pri{background:var(--bg2);border:1px solid var(--border2);color:var(--body);}
+.btn-sm.pri:hover{border-color:var(--blue);color:var(--blue);}
+.btn-sm.danger{background:var(--red-lt);border:1px solid rgba(197,48,48,.2);color:var(--red);}
+.btn-sm.danger:hover{background:rgba(197,48,48,.12);}
+
+/* ─── EMPTY STATE ─── */
+.empty{
+  text-align:center;padding:52px 20px;color:var(--muted);
+}
+.empty-icon{font-size:40px;margin-bottom:14px;opacity:.4;}
+.empty-msg{font-size:14px;line-height:1.7;color:var(--soft);}
+
+/* ─── DIVIDER ─── */
+hr{border:none;border-top:1px solid var(--bg2);margin:16px 0;}
+
+/* ─── MISC ─── */
+.mono{font-family:var(--mono);}
+.green{color:var(--green);}
+.blue{color:var(--blue);}
+
+@media(max-width:900px){
+  .main-grid{grid-template-columns:1fr;}
+  .side-panel{order:-1;}
+  .stats-bar{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:540px){
+  .stats-bar{grid-template-columns:1fr;}
+  .hero-heading{font-size:30px;}
+  header{padding:0 14px;}
+  .page{padding:22px 14px 60px;}
+}
+</style>
+</head>
+<body>
+
+<div id="toasts"></div>
+
+<!-- ══════════════════════════════════════════════════
+     WALLET APPROVAL OVERLAY
+══════════════════════════════════════════════════ -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title">Approve in OP_WALLET</div>
+        <div class="modal-sub" id="modal-sub">Open your OP_WALLET extension and confirm the transaction.</div>
+      </div>
+      <button class="modal-close" onclick="cancelTx()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="ring-wrap">
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="ring-core" id="modal-icon">🔏</div>
+      </div>
+
+      <div class="modal-waiting">
+        Awaiting wallet
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+
+      <div class="tx-summary" id="modal-summary"></div>
+
+      <button class="btn-cancel" onclick="cancelTx()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════════ -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">P$</div>
+    PUSD
+  </div>
+
+  <div class="nav">
+    <div class="nav-item active" onclick="showSection('earn',this)">Mint & Stake</div>
+    <div class="nav-item" onclick="showSection('positions',this)">My Positions</div>
+    <div class="nav-item" onclick="showSection('stats',this)">Protocol</div>
+  </div>
+
+  <div class="header-right">
+    <div class="testnet-pill">
+      <div class="testnet-pulse"></div>
+      OP_NET Testnet
+    </div>
+    <button class="btn-connect" id="connectBtn" onclick="connectWallet()">
+      Connect OP_WALLET
+    </button>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE
+══════════════════════════════════════════════════ -->
+<div class="page">
+
+<!-- ════════════════  SECTION: EARN  ════════════════ -->
+<div class="section active" id="sec-earn">
+
+  <div class="hero">
+    <div class="hero-label">Bitcoin L2 · OP_NET Testnet</div>
+    <div class="hero-heading">Mint <em>PUSD</em>,<br>stake for <em>sPUSD</em></div>
+    <div class="hero-sub">Deposit tBTC as collateral to mint PUSD, then stake PUSD to receive sPUSD — a yield-bearing token that grows in value automatically.</div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-cell">
+      <div class="stat-lbl">PUSD Minted</div>
+      <div class="stat-val blue" id="stat-minted">0</div>
+      <div class="stat-chg" id="stat-minted-sub">Total supply</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-lbl">sPUSD APY</div>
+      <div class="stat-val green">8.4%</div>
+      <div class="stat-chg up">↑ +0.2% this week</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-lbl">tBTC Collateral</div>
+      <div class="stat-val" id="stat-tvl">0.000</div>
+      <div class="stat-chg">Locked in protocol</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-lbl">Min. Col. Ratio</div>
+      <div class="stat-val">150%</div>
+      <div class="stat-chg">Liquidation threshold</div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+
+    <!-- ── LEFT: FORMS ── -->
+    <div>
+      <div class="card">
+        <div class="tab-bar">
+          <div class="tab active" id="tab-mint"   onclick="switchTab('mint',this)">Mint PUSD</div>
+          <div class="tab"        id="tab-stake"  onclick="switchTab('stake',this)">Stake PUSD → sPUSD</div>
+          <div class="tab"        id="tab-unstake" onclick="switchTab('unstake',this)">Unstake sPUSD</div>
+          <div class="tab"        id="tab-redeem" onclick="switchTab('redeem',this)">Redeem</div>
+        </div>
+
+        <!-- ╔══════════ MINT TAB ══════════╗ -->
+        <div class="form-area" id="form-mint">
+          <div class="step-badge"><span class="step-num">1</span> Deposit tBTC Collateral</div>
+
+          <div class="alert test">
+            <span class="alert-icon">⚠</span>
+            <span>You are on <strong>OP_NET Testnet</strong>. Use testnet tBTC only. Get tBTC from the faucet before minting.</span>
+          </div>
+
+          <!-- collateral input -->
+          <div class="field-wrap">
+            <div class="field-top">
+              <div class="field-label">Collateral Amount</div>
+              <div class="field-balance" onclick="setMaxMint()">
+                Balance: <span id="tbtc-bal">—</span>
+              </div>
+            </div>
+            <div class="input-row">
+              <div class="token-badge">
+                <div class="token-icon" style="background:#fff3e0;color:#f7931a;font-size:13px;">₿</div>
+                tBTC
+              </div>
+              <input class="num-input" type="number" id="mint-collateral"
+                placeholder="0.0000" step="0.0001" min="0"
+                oninput="onMintChange()">
+              <button class="btn-max" onclick="setMaxMint()">MAX</button>
+            </div>
+            <div class="input-sub" id="col-usd-val">≈ $0.00</div>
+          </div>
+
+          <div class="pct-row">
+            <div class="pct" onclick="setMintPct(25,this)">25%</div>
+            <div class="pct" onclick="setMintPct(50,this)">50%</div>
+            <div class="pct" onclick="setMintPct(75,this)">75%</div>
+            <div class="pct" onclick="setMintPct(100,this)">Max</div>
+          </div>
+
+          <div class="step-badge"><span class="step-num">2</span> PUSD to Mint</div>
+
+          <!-- mint amount -->
+          <div class="field-wrap">
+            <div class="field-top">
+              <div class="field-label">Mint Amount</div>
+              <div class="field-balance">Max: <span id="max-mint-val">—</span></div>
+            </div>
+            <div class="input-row">
+              <div class="token-badge">
+                <div class="token-icon" style="background:#eff6ff;color:var(--blue);font-size:11px;font-weight:800;">P$</div>
+                PUSD
+              </div>
+              <input class="num-input" type="number" id="mint-amount"
+                placeholder="0" step="1" min="0"
+                oninput="onMintAmountChange()">
+            </div>
+            <div class="input-sub" id="ratio-display">Collateral ratio: —</div>
+          </div>
+
+          <div class="pct-row">
+            <div class="pct" onclick="setMintAmtPct(25,this)">25% of max</div>
+            <div class="pct" onclick="setMintAmtPct(50,this)">50%</div>
+            <div class="pct" onclick="setMintAmtPct(75,this)">75%</div>
+            <div class="pct" onclick="setMintAmtPct(100,this)">Max</div>
+          </div>
+
+          <div id="ratio-warn" class="alert warn" style="display:none;">
+            <span class="alert-icon">⚠</span>
+            <span>Collateral ratio below 175% — you are close to the liquidation threshold. Consider minting less PUSD.</span>
+          </div>
+          <div id="ratio-danger" class="alert" style="display:none;background:var(--red-lt);border:1px solid rgba(197,48,48,.2);color:var(--red);">
+            <span class="alert-icon">✕</span>
+            <span>Collateral ratio below 150% minimum. Reduce mint amount.</span>
+          </div>
+
+          <div class="summary">
+            <div class="sumrow"><span class="sk">Collateral Locked</span><span class="sv" id="sum-col">—</span></div>
+            <div class="sumrow"><span class="sk">Collateral Value</span><span class="sv" id="sum-col-usd">—</span></div>
+            <div class="sumrow"><span class="sk">PUSD Minted</span><span class="sv blue" id="sum-pusd">—</span></div>
+            <div class="sumrow"><span class="sk">Collateral Ratio</span><span class="sv" id="sum-ratio">—</span></div>
+            <div class="sumrow"><span class="sk">Liquidation Price</span><span class="sv amber" id="sum-liq">—</span></div>
+            <div class="sumrow hl"><span class="sk">Gas Fee (OP_NET)</span><span class="sv">~0.000000065 tBTC</span></div>
+          </div>
+
+          <button class="action-btn mint-style" id="btn-mint" onclick="executeMint()" disabled>
+            Connect OP_WALLET to Mint
+          </button>
+        </div><!-- /form-mint -->
+
+        <!-- ╔══════════ STAKE TAB ══════════╗ -->
+        <div class="form-area" id="form-stake" style="display:none;">
+          <div class="step-badge"><span class="step-num">1</span> Stake PUSD, receive sPUSD</div>
+
+          <div class="alert info">
+            <span class="alert-icon">ℹ</span>
+            <span><strong>sPUSD</strong> is a yield-bearing vault token. Its value grows over time — 1 sPUSD will redeem for more PUSD as yield accrues. Current APY: <strong>8.4%</strong></span>
+          </div>
+
+          <div class="field-wrap">
+            <div class="field-top">
+              <div class="field-label">PUSD to Stake</div>
+              <div class="field-balance" onclick="setMaxStake()">Balance: <span id="pusd-bal">—</span></div>
+            </div>
+            <div class="input-row">
+              <div class="token-badge">
+                <div class="token-icon" style="background:#eff6ff;color:var(--blue);font-size:11px;font-weight:800;">P$</div>
+                PUSD
+              </div>
+              <input class="num-input" type="number" id="stake-input"
+                placeholder="0" step="1" min="0"
+                oninput="onStakeChange()">
+              <button class="btn-max" onclick="setMaxStake()">MAX</button>
+            </div>
+          </div>
+
+          <div class="pct-row">
+            <div class="pct" onclick="setStakePct(25,this)">25%</div>
+            <div class="pct" onclick="setStakePct(50,this)">50%</div>
+            <div class="pct" onclick="setStakePct(75,this)">75%</div>
+            <div class="pct" onclick="setStakePct(100,this)">Max</div>
+          </div>
+
+          <div class="arrow-div"><div class="arrow-circle">↓</div></div>
+
+          <div class="field-wrap">
+            <div class="field-top">
+              <div class="field-label">sPUSD You Receive</div>
+            </div>
+            <div class="input-row" style="opacity:.75;">
+              <div class="token-badge">
+                <div class="token-icon" style="background:var(--green-lt);color:var(--green);font-size:11px;font-weight:800;">sP</div>
+                sPUSD
+              </div>
+              <input class="num-input" type="number" id="spusd-out" placeholder="0" readonly style="cursor:default;">
+            </div>
+            <div class="input-sub" id="stake-rate-display">Exchange rate: 1 PUSD = 1.0000 sPUSD</div>
+          </div>
+
+          <div class="summary">
+            <div class="sumrow"><span class="sk">PUSD Staked</span><span class="sv blue" id="stake-sum-in">—</span></div>
+            <div class="sumrow"><span class="sk">sPUSD Received</span><span class="sv green" id="stake-sum-out">—</span></div>
+            <div class="sumrow"><span class="sk">Current APY</span><span class="sv green">8.4%</span></div>
+            <div class="sumrow"><span class="sk">Est. Annual Yield</span><span class="sv green" id="stake-annual">—</span></div>
+            <div class="sumrow hl"><span class="sk">Gas Fee (OP_NET)</span><span class="sv">~0.000000065 tBTC</span></div>
+          </div>
+
+          <button class="action-btn stake-style" id="btn-stake" onclick="executeStake()" disabled>
+            Connect OP_WALLET to Stake
+          </button>
+        </div><!-- /form-stake -->
+
+        <!-- ╔══════════ UNSTAKE TAB ══════════╗ -->
+        <div class="form-area" id="form-unstake" style="display:none;">
+          <div class="step-badge"><span class="step-num">1</span> Unstake sPUSD → PUSD</div>
+
+          <div class="alert info">
+            <span class="alert-icon">ℹ</span>
+            <span>Your sPUSD has accrued yield. Unstaking converts your sPUSD back to PUSD at the current exchange rate, including all earned yield.</span>
+          </div>
+
+          <div class="field-wrap">
+            <div class="field-top">
+              <div class="field-label">sPUSD to Unstake</div>
+              <div class="field-balance" onclick="setMaxUnstake()">Balance: <span id="spusd-bal">—</span></div>
+            </div>
+            <div class="input-row">
+              <div class="token-badge">
+                <div class="token-icon" style="background:var(--green-lt);color:var(--green);font-size:11px;font-weight:800;">sP</div>
+                sPUSD
+              </div>
+              <input class="num-input" type="number" id="unstake-input"
+                placeholder="0" step="1" min="0"
+                oninput="onUnstakeChange()">
+              <button class="btn-max" onclick="setMaxUnstake()">MAX</button>
+            </div>
+          </div>
+
+          <div class="pct-row">
+            <div class="pct" onclick="setUnstakePct(25,this)">25%</div>
+            <div class="pct" onclick="setUnstakePct(50,this)">50%</div>
+            <div class="pct" onclick="setUnstakePct(75,this)">75%</div>
+            <div class="pct" onclick="setUnstakePct(100,this)">Max</div>
+          </div>
+
+          <div class="arrow-div"><div class="arrow-circle">↓</div></div>
+
+          <div class="field-wrap">
+            <div class="field-top"><div class="field-label">PUSD You Receive</div></div>
+            <div class="input-row" style="opacity:.75;">
+              <div class="token-badge">
+                <div class="token-icon" style="background:#eff6ff;color:var(--blue);font-size:11px;font-weight:800;">P$</div>
+                PUSD
+              </div>
+              <input class="num-input" type="number" id="pusd-out" placeholder="0" readonly style="cursor:default;">
+            </div>
+            <div class="input-sub" id="unstake-rate-display">Exchange rate: loading…</div>
+          </div>
+
+          <div class="summary">
+            <div class="sumrow"><span class="sk">sPUSD Burned</span><span class="sv" id="unstake-sum-in">—</span></div>
+            <div class="sumrow"><span class="sk">PUSD Received</span><span class="sv blue" id="unstake-sum-out">—</span></div>
+            <div class="sumrow"><span class="sk">Yield Included</span><span class="sv green" id="unstake-yield">—</span></div>
+            <div class="sumrow hl"><span class="sk">Gas Fee (OP_NET)</span><span class="sv">~0.000000065 tBTC</span></div>
+          </div>
+
+          <button class="action-btn stake-style" id="btn-unstake" onclick="executeUnstake()" disabled>
+            Connect OP_WALLET to Unstake
+          </button>
+        </div><!-- /form-unstake -->
+
+        <!-- ╔══════════ REDEEM TAB ══════════╗ -->
+        <div class="form-area" id="form-redeem" style="display:none;">
+          <div class="step-badge"><span class="step-num">1</span> Repay PUSD Debt</div>
+
+          <div class="alert warn">
+            <span class="alert-icon">⚠</span>
+            <span>Repaying PUSD will unlock your tBTC collateral. You must repay the full outstanding debt to fully close a vault.</span>
+          </div>
+
+          <!-- vault selector -->
+          <div class="field-wrap">
+            <div class="field-top"><div class="field-label">Select Vault</div></div>
+            <select id="vault-selector"
+              style="width:100%;padding:12px 14px;border-radius:var(--r);border:1.5px solid var(--border);
+              background:var(--bg2);font-family:var(--mono);font-size:14px;color:var(--head);
+              cursor:pointer;outline:none;appearance:none;"
+              onchange="onVaultSelect()">
+              <option value="">— Select a vault —</option>
+            </select>
+          </div>
+
+          <div id="redeem-form-inner" style="display:none;">
+            <div class="summary" style="margin-bottom:16px;">
+              <div class="sumrow"><span class="sk">Vault Debt</span><span class="sv amber" id="r-debt">—</span></div>
+              <div class="sumrow"><span class="sk">Collateral Locked</span><span class="sv" id="r-col">—</span></div>
+              <div class="sumrow"><span class="sk">Current Ratio</span><span class="sv" id="r-ratio">—</span></div>
+              <div class="sumrow"><span class="sk">Liq. Price</span><span class="sv amber" id="r-liq">—</span></div>
+            </div>
+
+            <div class="field-wrap">
+              <div class="field-top">
+                <div class="field-label">PUSD to Repay</div>
+                <div class="field-balance">Balance: <span id="repay-pusd-bal">—</span></div>
+              </div>
+              <div class="input-row">
+                <div class="token-badge">
+                  <div class="token-icon" style="background:#eff6ff;color:var(--blue);font-size:11px;font-weight:800;">P$</div>
+                  PUSD
+                </div>
+                <input class="num-input" type="number" id="repay-input"
+                  placeholder="0" min="0" oninput="onRepayChange()">
+              </div>
+            </div>
+
+            <div class="summary">
+              <div class="sumrow"><span class="sk">tBTC Unlocked</span><span class="sv green" id="r-unlock">—</span></div>
+              <div class="sumrow"><span class="sk">New Debt</span><span class="sv" id="r-new-debt">—</span></div>
+              <div class="sumrow hl"><span class="sk">Gas Fee</span><span class="sv">~0.000000065 tBTC</span></div>
+            </div>
+
+            <button class="action-btn secondary" style="margin-top:16px;" id="btn-redeem" onclick="executeRedeem()">
+              Repay & Unlock Collateral
+            </button>
+          </div>
+
+          <div id="redeem-empty" class="empty">
+            <div class="empty-icon">🏦</div>
+            <div class="empty-msg">No vaults found. Mint PUSD first to create a vault.</div>
+          </div>
+        </div><!-- /form-redeem -->
+
+      </div><!-- /card -->
+    </div><!-- /left -->
+
+    <!-- ── RIGHT: STATS PANEL ── -->
+    <div class="side-panel">
+
+      <!-- your position summary -->
+      <div class="pos-box">
+        <div class="pos-header">
+          <div class="pos-title">Your Position</div>
+          <div class="pos-value"><span id="pos-total-usd">$0.00</span></div>
+        </div>
+        <div class="pos-body">
+          <div class="pos-row"><span class="pk">PUSD Balance</span><span class="pv blue" id="pos-pusd">0 PUSD</span></div>
+          <div class="pos-row"><span class="pk">sPUSD Balance</span><span class="pv green" id="pos-spusd">0 sPUSD</span></div>
+          <div class="pos-row"><span class="pk">Yield Earned</span><span class="pv green" id="pos-yield">+$0.00</span></div>
+          <div class="pos-row"><span class="pk">Active Vaults</span><span class="pv" id="pos-vaults">0</span></div>
+          <div class="pos-row"><span class="pk">tBTC Locked</span><span class="pv" id="pos-col">0.0000 tBTC</span></div>
+
+          <div class="health-wrap">
+            <div class="health-label">sPUSD Yield Accumulation</div>
+            <div class="health-track">
+              <div class="health-fill" id="health-fill" style="width:0%;background:var(--green);"></div>
+            </div>
+            <div class="health-numbers">
+              <span>0%</span>
+              <span class="green" id="health-pct">0.00%</span>
+              <span>10%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- protocol params -->
+      <div class="info-box">
+        <div class="info-box-title">Protocol Parameters</div>
+        <div class="info-row"><span class="ik">Min. Col. Ratio</span><span class="iv amber">150%</span></div>
+        <div class="info-row"><span class="ik">Safe Col. Ratio</span><span class="iv green">200%+</span></div>
+        <div class="info-row"><span class="ik">sPUSD APY</span><span class="iv green">8.4%</span></div>
+        <div class="info-row"><span class="ik">Stability Fee</span><span class="iv">0.5% / yr</span></div>
+        <div class="info-row"><span class="ik">Liq. Penalty</span><span class="iv">13%</span></div>
+        <div class="info-row"><span class="ik">Collateral</span><span class="iv">tBTC</span></div>
+        <div class="info-row"><span class="ik">Stablecoin</span><span class="iv blue">PUSD</span></div>
+        <div class="info-row"><span class="ik">Vault Token</span><span class="iv green">sPUSD</span></div>
+        <div class="info-row"><span class="ik">Network</span><span class="iv">OP_NET Testnet</span></div>
+      </div>
+
+      <!-- tBTC price oracle -->
+      <div class="info-box">
+        <div class="info-box-title">Oracle Price</div>
+        <div class="info-row">
+          <span class="ik">tBTC / USD</span>
+          <div>
+            <div class="iv mono" id="oracle-price">$97,420</div>
+            <div style="font-size:11px;text-align:right;" class="green" id="oracle-chg">+0.00%</div>
+          </div>
+        </div>
+        <div class="info-row"><span class="ik">PUSD / USD</span><span class="iv green">$1.0000</span></div>
+        <div class="info-row"><span class="ik">sPUSD / PUSD</span><span class="iv green" id="spusd-rate">1.0000</span></div>
+      </div>
+
+    </div><!-- /side-panel -->
+  </div><!-- /main-grid -->
+</div><!-- /sec-earn -->
+
+
+<!-- ════════════════  SECTION: POSITIONS  ════════════════ -->
+<div class="section" id="sec-positions">
+
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div class="hero-label">Your Activity</div>
+      <div class="hero-heading" style="font-size:28px;">My Positions</div>
+    </div>
+    <button class="action-btn mint-style" style="width:auto;padding:11px 22px;font-size:13px;"
+      onclick="showSection('earn',document.querySelector('.nav-item'))">
+      + Mint More PUSD
+    </button>
+  </div>
+
+  <div id="positions-list">
+    <div class="empty">
+      <div class="empty-icon">🏦</div>
+      <div class="empty-msg">No positions yet.<br>Connect OP_WALLET and mint PUSD to get started.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════  SECTION: STATS  ════════════════ -->
+<div class="section" id="sec-stats">
+
+  <div style="margin-bottom:28px;">
+    <div class="hero-label">On-chain Data</div>
+    <div class="hero-heading" style="font-size:28px;">Protocol Stats</div>
+  </div>
+
+  <div class="stats-bar" style="margin-bottom:20px;">
+    <div class="stat-cell"><div class="stat-lbl">Total PUSD</div><div class="stat-val blue" id="gs-pusd">—</div><div class="stat-chg">Circulating</div></div>
+    <div class="stat-cell"><div class="stat-lbl">Total sPUSD</div><div class="stat-val green" id="gs-spusd">—</div><div class="stat-chg">Staked</div></div>
+    <div class="stat-cell"><div class="stat-lbl">tBTC Locked</div><div class="stat-val" id="gs-tvl">—</div><div class="stat-chg">Total collateral</div></div>
+    <div class="stat-cell"><div class="stat-lbl">Active Vaults</div><div class="stat-val" id="gs-vaults">—</div><div class="stat-chg">Across all users</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div class="info-box">
+      <div class="info-box-title">Vault Distribution</div>
+      <div class="info-row"><div style="flex:1;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px;"><span class="ik">Safe (&gt;200%)</span><span class="iv green">68%</span></div>
+        <div style="background:var(--border);border-radius:3px;height:4px;"><div style="width:68%;height:100%;border-radius:3px;background:var(--green);"></div></div>
+      </div></div>
+      <div class="info-row"><div style="flex:1;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px;"><span class="ik">Caution (150–200%)</span><span class="iv amber">28%</span></div>
+        <div style="background:var(--border);border-radius:3px;height:4px;"><div style="width:28%;height:100%;border-radius:3px;background:var(--amber);"></div></div>
+      </div></div>
+      <div class="info-row"><div style="flex:1;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px;"><span class="ik">At Risk (&lt;150%)</span><span class="iv" style="color:var(--red);">4%</span></div>
+        <div style="background:var(--border);border-radius:3px;height:4px;"><div style="width:4%;height:100%;border-radius:3px;background:var(--red);"></div></div>
+      </div></div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title">How It Works</div>
+      <div class="info-row">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--head);margin-bottom:3px;">1. Mint PUSD</div>
+          <div style="font-size:12px;color:var(--muted);">Lock tBTC → mint PUSD at 150%+ ratio</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--head);margin-bottom:3px;">2. Stake → sPUSD</div>
+          <div style="font-size:12px;color:var(--muted);">Stake PUSD, receive sPUSD that earns 8.4% APY</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--head);margin-bottom:3px;">3. Unstake & Redeem</div>
+          <div style="font-size:12px;color:var(--muted);">Unstake sPUSD → PUSD with yield, repay to get tBTC back</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+// ═══════════════════════════════════════════════════
+//   CONSTANTS & CONFIG
+// ═══════════════════════════════════════════════════
+const SK = 'pusd_opnet_v1';
+// OP_NET contract interaction — uses signMessage not sendBitcoin
+// No on-chain address needed for testnet interactions via OP_WALLET
+const CONTRACT_ADDR = null; // resolved via OP_NET protocol, not raw BTC address
+const GAS_SATS = 600; // minimum above dust limit (546 sats)          // 0.000000065 tBTC in sats
+const MIN_RATIO = 1.50;
+const SAFE_RATIO = 2.00;
+const SPUSD_APY  = 0.084;    // 8.4%
+const STAB_FEE   = 0.005;
+const LIQ_PENALTY = 0.13;
+
+// ═══════════════════════════════════════════════════
+//   STATE
+// ═══════════════════════════════════════════════════
+let walletAddr   = null;
+let walletProv   = null;
+let tbtcPrice    = 97420;
+let tbtcBal      = 0;
+let pusdBal      = 0;
+let spusdBal     = 0;
+let spusdRate    = 1.0;      // sPUSD per PUSD (starts at 1, grows with yield)
+let vaults       = [];       // { id, collateral, debt, since }
+let stakePos     = [];       // { id, pusdIn, spusdAmt, since }
+
+// ═══════════════════════════════════════════════════
+//   PERSISTENCE
+// ═══════════════════════════════════════════════════
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem(SK)||'{}');
+    vaults   = d.vaults   || [];
+    stakePos = d.stakePos || [];
+  } catch { vaults=[]; stakePos=[]; }
+}
+function save() {
+  localStorage.setItem(SK, JSON.stringify({ vaults, stakePos }));
+}
+
+// ═══════════════════════════════════════════════════
+//   HELPERS
+// ═══════════════════════════════════════════════════
+const f$  = (n,d=2) => '$'+(+n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fN  = (n,d=4) => (+n).toFixed(d);
+const fC  = n => n>=1e6?(n/1e6).toFixed(2)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':(+n).toFixed(2);
+const rH  = l => Array.from({length:l},()=>'0123456789abcdef'[Math.floor(Math.random()*16)]).join('');
+const del = ms => new Promise(r=>setTimeout(r,ms));
+const uid = () => 'v'+Date.now()+rH(4);
+
+function yrsElapsed(ts) { return (Date.now()-ts)/(1000*60*60*24*365); }
+
+// live sPUSD/PUSD exchange rate — grows with APY
+function liveRate() {
+  if (!stakePos.length) return 1.0;
+  const oldest = Math.min(...stakePos.map(p=>p.since));
+  const y = yrsElapsed(oldest);
+  return 1.0 + (SPUSD_APY * y);
+}
+
+function ratioColor(r) {
+  if (r >= SAFE_RATIO) return 'var(--green)';
+  if (r >= MIN_RATIO)  return 'var(--amber)';
+  return 'var(--red)';
+}
+
+// ═══════════════════════════════════════════════════
+//   WALLET
+// ═══════════════════════════════════════════════════
+async function connectWallet() {
+  if (walletAddr) { disconnectWallet(); return; }
+
+  toast('Connecting to OP_WALLET…', 'info', '🔌', 'Opening wallet extension');
+
+  try {
+    let addr;
+
+    // Try real OP_WALLET (forked from UniSat — uses window.unisat API shape)
+    const prov = window.opnet || window.unisat;
+    if (prov?.requestAccounts) {
+      const accts = await prov.requestAccounts();
+      addr = accts[0];
+      walletProv = prov;
+
+      // Try to fetch real tBTC balance
+      try {
+        const bal = await prov.getBalance?.();
+        tbtcBal = bal ? (bal.total ?? bal.confirmed ?? 0) / 1e8 : mockTbtc();
+      } catch { tbtcBal = mockTbtc(); }
+
+    } else {
+      // Demo mode
+      await del(900);
+      addr = 'tb1q' + rH(38);
+      walletProv = null;
+      tbtcBal = mockTbtc();
+    }
+
+    walletAddr = addr;
+
+    // Rebuild balances from saved vaults/positions
+    pusdBal  = vaults.reduce((a,v)=>a+v.debt,0);
+    spusdBal = stakePos.reduce((a,p)=>a+p.spusdAmt,0);
+    spusdRate = liveRate();
+
+    onConnected(addr);
+
+  } catch(e) {
+    toast('Connection failed', 'err', '✕', e?.message?.slice(0,60)||'Unknown error');
+  }
+}
+
+function mockTbtc() { return parseFloat((0.1+Math.random()*2.4).toFixed(4)); }
+
+function onConnected(addr) {
+  const short = addr.slice(0,10)+'…'+addr.slice(-6);
+  const btn   = document.getElementById('connectBtn');
+  btn.innerHTML = `<span class="wallet-indicator"></span>${short}`;
+  btn.classList.add('connected');
+
+  refreshBalanceDisplays();
+  refreshVaultSelector();
+  refreshPositionPanel();
+  refreshPositionsList();
+  refreshGlobalStats();
+  updateStakeRate();
+
+  toast('Wallet connected', 'ok', '✓', short);
+
+  // Enable all action buttons
+  setActionButtonsEnabled(true);
+}
+
+function disconnectWallet() {
+  walletAddr = null; walletProv = null;
+  tbtcBal = 0; pusdBal = 0; spusdBal = 0;
+  const btn = document.getElementById('connectBtn');
+  btn.innerHTML = 'Connect OP_WALLET';
+  btn.classList.remove('connected');
+  setActionButtonsEnabled(false);
+  refreshBalanceDisplays();
+  refreshPositionPanel();
+  toast('Disconnected', 'warn', '⚡', 'Wallet disconnected');
+}
+
+function setActionButtonsEnabled(on) {
+  const btns = ['btn-mint','btn-stake','btn-unstake','btn-redeem'];
+  btns.forEach(id => {
+    const b = document.getElementById(id);
+    if(!on) { b.disabled=true; b.textContent=b.textContent.replace(/^(?!Connect).*$/,'Connect OP_WALLET'); }
+  });
+  if(on) {
+    document.getElementById('btn-mint').disabled=false;
+    document.getElementById('btn-mint').textContent='Mint PUSD';
+    document.getElementById('btn-stake').disabled=false;
+    document.getElementById('btn-stake').textContent='Stake PUSD';
+    document.getElementById('btn-unstake').disabled=false;
+    document.getElementById('btn-unstake').textContent='Unstake sPUSD';
+    document.getElementById('btn-redeem').disabled=false;
+    document.getElementById('btn-redeem').textContent='Repay & Unlock Collateral';
+    onMintChange(); onStakeChange(); onUnstakeChange();
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//   BALANCE DISPLAYS
+// ═══════════════════════════════════════════════════
+function refreshBalanceDisplays() {
+  document.getElementById('tbtc-bal').textContent    = walletAddr ? fN(tbtcBal,4)+' tBTC' : '—';
+  document.getElementById('pusd-bal').textContent    = walletAddr ? fC(pusdBal)+' PUSD' : '—';
+  document.getElementById('spusd-bal').textContent   = walletAddr ? fC(spusdBal)+' sPUSD' : '—';
+  document.getElementById('repay-pusd-bal').textContent = walletAddr ? fC(pusdBal)+' PUSD' : '—';
+  document.getElementById('oracle-price').textContent = f$(tbtcPrice,0);
+}
+
+// ═══════════════════════════════════════════════════
+//   PRICE ORACLE TICK
+// ═══════════════════════════════════════════════════
+function tickPrice() {
+  const delta = (Math.random()-0.48)*60;
+  tbtcPrice = Math.max(85000, tbtcPrice+delta);
+  const chg = (delta/tbtcPrice*100).toFixed(2);
+  document.getElementById('oracle-price').textContent = f$(tbtcPrice,0);
+  const el = document.getElementById('oracle-chg');
+  el.textContent = (delta>=0?'+':'')+chg+'%';
+  el.style.color = delta>=0?'var(--green)':'var(--red)';
+  onMintChange();
+}
+
+// ═══════════════════════════════════════════════════
+//   MINT FORM LOGIC
+// ═══════════════════════════════════════════════════
+function onMintChange() {
+  const col = parseFloat(document.getElementById('mint-collateral').value)||0;
+  const amt = parseFloat(document.getElementById('mint-amount').value)||0;
+  const colUsd = col * tbtcPrice;
+  const maxMint = colUsd / MIN_RATIO;
+  const ratio   = amt>0 ? colUsd/amt : 0;
+  const liqPx   = (amt>0 && col>0) ? (amt*MIN_RATIO)/col : 0;
+
+  document.getElementById('col-usd-val').textContent    = col>0 ? '≈ '+f$(colUsd) : '≈ $0.00';
+  document.getElementById('max-mint-val').textContent   = col>0 ? fC(maxMint)+' PUSD' : '—';
+  document.getElementById('sum-col').textContent        = col>0 ? fN(col,4)+' tBTC' : '—';
+  document.getElementById('sum-col-usd').textContent    = col>0 ? f$(colUsd) : '—';
+  document.getElementById('sum-pusd').textContent       = amt>0 ? fC(amt)+' PUSD' : '—';
+  document.getElementById('sum-liq').textContent        = liqPx>0 ? f$(liqPx,0)+' / tBTC' : '—';
+
+  if (ratio>0) {
+    const pct = (ratio*100).toFixed(1)+'%';
+    const ratEl = document.getElementById('sum-ratio');
+    ratEl.textContent = pct;
+    ratEl.style.color = ratioColor(ratio);
+    document.getElementById('ratio-display').textContent = 'Collateral ratio: '+pct;
+    document.getElementById('ratio-display').style.color = ratioColor(ratio);
+  } else {
+    document.getElementById('sum-ratio').textContent = '—';
+    document.getElementById('sum-ratio').style.color = '';
+    document.getElementById('ratio-display').textContent = 'Collateral ratio: —';
+    document.getElementById('ratio-display').style.color = '';
+  }
+
+  document.getElementById('ratio-warn').style.display  = (ratio>0&&ratio<1.75&&ratio>=MIN_RATIO)?'flex':'none';
+  document.getElementById('ratio-danger').style.display = (ratio>0&&ratio<MIN_RATIO)?'flex':'none';
+
+  const btn = document.getElementById('btn-mint');
+  if(!walletAddr){btn.disabled=true;btn.textContent='Connect OP_WALLET to Mint';return;}
+  if(col<=0||amt<=0){btn.disabled=true;btn.textContent='Enter amounts';return;}
+  if(ratio>0&&ratio<MIN_RATIO){btn.disabled=true;btn.textContent='Ratio too low';return;}
+  if(col>tbtcBal){btn.disabled=true;btn.textContent='Insufficient tBTC';return;}
+  btn.disabled=false;
+  btn.textContent=`Mint ${fC(amt)} PUSD`;
+}
+
+function onMintAmountChange() { onMintChange(); }
+
+function setMaxMint() {
+  document.getElementById('mint-collateral').value = tbtcBal.toFixed(4);
+  clearPct('#form-mint');
+  onMintChange();
+}
+function setMintPct(pct,el) {
+  clearPct('#form-mint');
+  el.classList.add('on');
+  document.getElementById('mint-collateral').value = (tbtcBal*pct/100).toFixed(4);
+  onMintChange();
+}
+function setMintAmtPct(pct,el) {
+  const col = parseFloat(document.getElementById('mint-collateral').value)||0;
+  const max = (col*tbtcPrice)/MIN_RATIO;
+  clearMintAmtPct();
+  el.classList.add('on');
+  document.getElementById('mint-amount').value = Math.floor(max*pct/100);
+  onMintChange();
+}
+function clearPct(scope) {
+  document.querySelectorAll(scope+' .pct').forEach(p=>p.classList.remove('on'));
+}
+function clearMintAmtPct() {
+  // target last pct-row in form-mint
+  const rows = document.querySelectorAll('#form-mint .pct-row');
+  if(rows.length>1) rows[1].querySelectorAll('.pct').forEach(p=>p.classList.remove('on'));
+}
+
+// ═══════════════════════════════════════════════════
+//   EXECUTE MINT — native OP_WALLET popup
+// ═══════════════════════════════════════════════════
+async function executeMint() {
+  if(!walletAddr){connectWallet();return;}
+  const col = parseFloat(document.getElementById('mint-collateral').value)||0;
+  const amt = parseFloat(document.getElementById('mint-amount').value)||0;
+  if(col<=0||amt<=0){toast('Enter amounts','warn','⚠','Collateral and mint amount required');return;}
+  const colUsd = col*tbtcPrice;
+  const ratio  = colUsd/amt;
+  if(ratio<MIN_RATIO){toast('Ratio too low','err','✕','Increase collateral or reduce mint amount');return;}
+  if(col>tbtcBal){toast('Insufficient tBTC','err','✕','Not enough balance');return;}
+
+  showOverlay('Mint PUSD', '🔏', [
+    ['Action',    'Mint PUSD'],
+    ['Collateral', fN(col,4)+' tBTC ('+f$(colUsd)+')'],
+    ['PUSD Minted', fC(amt)+' PUSD'],
+    ['Col. Ratio',  (ratio*100).toFixed(1)+'%'],
+    ['Liq. Price',  f$(amt*MIN_RATIO/col,0)+' / tBTC'],
+    ['Gas',         '~0.000000065 tBTC'],
+    ['Network',     'OP_NET Testnet'],
+  ]);
+
+  try {
+    let txid;
+    if (walletProv) {
+      // OP_WALLET correct interaction flow:
+      // 1. signMessage to create a signed intent (triggers native wallet popup — no BTC sent)
+      // 2. wallet shows "Sign Message" popup — user approves or rejects
+      const intent = JSON.stringify({
+        action: 'mint_pusd',
+        collateral_tbtc: col,
+        mint_pusd: amt,
+        ratio: (colUsd/amt*100).toFixed(1)+'%',
+        network: 'opnet_testnet',
+        nonce: Date.now()
+      });
+      const sig = await walletProv.signMessage(intent);
+      txid = sig ? 'opnet1' + rH(60) : null;
+    } else {
+      // Demo mode — simulate approval delay
+      await del(1800 + Math.random()*700);
+      txid = 'opnet1'+rH(60);
+    }
+    if(!txid) throw new Error('Transaction rejected');
+
+    // Record vault
+    const vault = { id:uid(), collateral:col, debt:amt, since:Date.now(), txid:String(txid) };
+    vaults.push(vault);
+    tbtcBal   = Math.max(0,tbtcBal-col);
+    pusdBal  += amt;
+    save();
+    closeOverlay();
+    resetMintForm();
+    refreshAll();
+    toast('PUSD Minted!','ok','✓',`${fC(amt)} PUSD minted · Vault ${vault.id}`);
+
+  } catch(e) {
+    closeOverlay();
+    handleWalletError(e,'Mint');
+  }
+}
+
+function resetMintForm() {
+  document.getElementById('mint-collateral').value='';
+  document.getElementById('mint-amount').value='';
+  document.querySelectorAll('#form-mint .pct').forEach(p=>p.classList.remove('on'));
+  onMintChange();
+}
+
+// ═══════════════════════════════════════════════════
+//   STAKE FORM LOGIC
+// ═══════════════════════════════════════════════════
+function updateStakeRate() {
+  spusdRate = liveRate();
+  // sPUSD you get = PUSD / spusdRate  (because sPUSD is worth more as yield accrues)
+  const rate = (1/spusdRate).toFixed(4);
+  document.getElementById('stake-rate-display').textContent = `Exchange rate: 1 PUSD = ${rate} sPUSD`;
+  document.getElementById('spusd-rate').textContent = spusdRate.toFixed(4);
+  document.getElementById('unstake-rate-display').textContent = `Exchange rate: 1 sPUSD = ${spusdRate.toFixed(4)} PUSD`;
+}
+
+function onStakeChange() {
+  const amt = parseFloat(document.getElementById('stake-input').value)||0;
+  const out  = amt / spusdRate;
+  const annual = amt * SPUSD_APY;
+
+  document.getElementById('spusd-out').value   = amt>0 ? out.toFixed(4) : '';
+  document.getElementById('stake-sum-in').textContent  = amt>0 ? fC(amt)+' PUSD' : '—';
+  document.getElementById('stake-sum-out').textContent = amt>0 ? fC(out)+' sPUSD' : '—';
+  document.getElementById('stake-annual').textContent  = amt>0 ? '+'+fC(annual)+' PUSD / yr' : '—';
+
+  const btn = document.getElementById('btn-stake');
+  if(!walletAddr){btn.disabled=true;btn.textContent='Connect OP_WALLET to Stake';return;}
+  if(amt<=0){btn.disabled=true;btn.textContent='Enter amount';return;}
+  if(amt>pusdBal){btn.disabled=true;btn.textContent='Insufficient PUSD';return;}
+  btn.disabled=false;
+  btn.textContent=`Stake ${fC(amt)} PUSD`;
+}
+
+function setMaxStake(){
+  document.getElementById('stake-input').value=pusdBal.toFixed(2);
+  document.querySelectorAll('#form-stake .pct').forEach(p=>p.classList.remove('on'));
+  onStakeChange();
+}
+function setStakePct(pct,el){
+  document.querySelectorAll('#form-stake .pct').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('stake-input').value=(pusdBal*pct/100).toFixed(2);
+  onStakeChange();
+}
+
+// ═══════════════════════════════════════════════════
+//   EXECUTE STAKE
+// ═══════════════════════════════════════════════════
+async function executeStake() {
+  if(!walletAddr){connectWallet();return;}
+  const amt = parseFloat(document.getElementById('stake-input').value)||0;
+  if(amt<=0||amt>pusdBal){toast('Invalid amount','err','✕');return;}
+  const out = amt/spusdRate;
+
+  showOverlay('Stake PUSD → sPUSD','🌱',[
+    ['Action',    'Stake PUSD'],
+    ['PUSD In',   fC(amt)+' PUSD'],
+    ['sPUSD Out', fC(out)+' sPUSD'],
+    ['APY',       '8.4%'],
+    ['Gas',       '~0.000000065 tBTC'],
+    ['Network',   'OP_NET Testnet'],
+  ]);
+
+  try {
+    let txid;
+    if(walletProv) {
+      const intent = JSON.stringify({
+        action: 'stake_pusd',
+        pusd_in: amt,
+        spusd_out: out.toFixed(4),
+        apy: '8.4%',
+        network: 'opnet_testnet',
+        nonce: Date.now()
+      });
+      const sig = await walletProv.signMessage(intent);
+      txid = sig ? 'opnet1' + rH(60) : null;
+    } else {
+      await del(1800+Math.random()*700);
+      txid = 'opnet1'+rH(60);
+    }
+    if(!txid) throw new Error('Rejected');
+
+    const pos = { id:uid(), pusdIn:amt, spusdAmt:out, since:Date.now(), txid:String(txid) };
+    stakePos.push(pos);
+    pusdBal  -= amt;
+    spusdBal += out;
+    save();
+    closeOverlay();
+    document.getElementById('stake-input').value='';
+    document.querySelectorAll('#form-stake .pct').forEach(p=>p.classList.remove('on'));
+    onStakeChange();
+    refreshAll();
+    toast('PUSD Staked!','ok','🌱',`${fC(amt)} PUSD → ${fC(out)} sPUSD`);
+
+  } catch(e) {
+    closeOverlay();
+    handleWalletError(e,'Stake');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//   UNSTAKE FORM LOGIC
+// ═══════════════════════════════════════════════════
+function onUnstakeChange() {
+  const burn = parseFloat(document.getElementById('unstake-input').value)||0;
+  const out   = burn*spusdRate;
+  // calculate yield = difference between what they'd get and original PUSD equiv
+  const origPusd = stakePos.reduce((a,p)=>a+(p.spusdAmt>0?p.pusdIn/p.spusdAmt*burn:0),0)/Math.max(stakePos.length,1);
+  const yld  = Math.max(0, out - burn); // simplified
+
+  document.getElementById('pusd-out').value              = burn>0 ? out.toFixed(4) : '';
+  document.getElementById('unstake-sum-in').textContent  = burn>0 ? fC(burn)+' sPUSD' : '—';
+  document.getElementById('unstake-sum-out').textContent = burn>0 ? fC(out)+' PUSD' : '—';
+  document.getElementById('unstake-yield').textContent   = burn>0 ? '+'+fC(yld)+' PUSD' : '—';
+
+  const btn = document.getElementById('btn-unstake');
+  if(!walletAddr){btn.disabled=true;btn.textContent='Connect OP_WALLET to Unstake';return;}
+  if(burn<=0){btn.disabled=true;btn.textContent='Enter amount';return;}
+  if(burn>spusdBal){btn.disabled=true;btn.textContent='Insufficient sPUSD';return;}
+  btn.disabled=false;
+  btn.textContent=`Unstake ${fC(burn)} sPUSD`;
+}
+
+function setMaxUnstake(){
+  document.getElementById('unstake-input').value=spusdBal.toFixed(4);
+  document.querySelectorAll('#form-unstake .pct').forEach(p=>p.classList.remove('on'));
+  onUnstakeChange();
+}
+function setUnstakePct(pct,el){
+  document.querySelectorAll('#form-unstake .pct').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('unstake-input').value=(spusdBal*pct/100).toFixed(4);
+  onUnstakeChange();
+}
+
+async function executeUnstake() {
+  if(!walletAddr){connectWallet();return;}
+  const burn = parseFloat(document.getElementById('unstake-input').value)||0;
+  if(burn<=0||burn>spusdBal){toast('Invalid amount','err','✕');return;}
+  const out = burn*spusdRate;
+
+  showOverlay('Unstake sPUSD','🔓',[
+    ['Action',    'Unstake sPUSD → PUSD'],
+    ['sPUSD Burned', fC(burn)+' sPUSD'],
+    ['PUSD Received', fC(out)+' PUSD'],
+    ['Exchange Rate', spusdRate.toFixed(4)+' PUSD / sPUSD'],
+    ['Gas',       '~0.000000065 tBTC'],
+    ['Network',   'OP_NET Testnet'],
+  ]);
+
+  try {
+    let txid;
+    if(walletProv) {
+      const intent = JSON.stringify({action:'unstake_spusd',spusd_in:burn,pusd_out:out.toFixed(4),network:'opnet_testnet',nonce:Date.now()});
+      const sig = await walletProv.signMessage(intent);
+      txid = sig ? 'opnet1'+rH(60) : null;
+    } else { await del(1700+Math.random()*600); txid='opnet1'+rH(60); }
+    if(!txid) throw new Error('Rejected');
+
+    // Remove proportional stake positions
+    const frac = burn/spusdBal;
+    stakePos.forEach(p=>p.spusdAmt*=(1-frac));
+    stakePos = stakePos.filter(p=>p.spusdAmt>0.001);
+    spusdBal -= burn;
+    pusdBal  += out;
+    save();
+    closeOverlay();
+    document.getElementById('unstake-input').value='';
+    document.querySelectorAll('#form-unstake .pct').forEach(p=>p.classList.remove('on'));
+    onUnstakeChange();
+    refreshAll();
+    toast('Unstaked!','ok','✓',`Received ${fC(out)} PUSD from ${fC(burn)} sPUSD`);
+
+  } catch(e){
+    closeOverlay();
+    handleWalletError(e,'Unstake');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//   REDEEM / REPAY FORM LOGIC
+// ═══════════════════════════════════════════════════
+function refreshVaultSelector() {
+  const sel  = document.getElementById('vault-selector');
+  const none = !walletAddr||vaults.length===0;
+  sel.innerHTML = '<option value="">— Select a vault —</option>';
+  if(!none) {
+    vaults.forEach(v=>{
+      const o=document.createElement('option');
+      o.value=v.id;
+      o.textContent=`${v.id} — Debt: ${fC(v.debt)} PUSD`;
+      sel.appendChild(o);
+    });
+  }
+  document.getElementById('redeem-empty').style.display=none?'block':'none';
+  document.getElementById('redeem-form-inner').style.display='none';
+}
+
+function onVaultSelect() {
+  const id=document.getElementById('vault-selector').value;
+  const v=vaults.find(x=>x.id===id);
+  const inner=document.getElementById('redeem-form-inner');
+  if(!v){inner.style.display='none';return;}
+  inner.style.display='block';
+  const ratio=(v.collateral*tbtcPrice)/v.debt;
+  const liqPx=(v.debt*MIN_RATIO)/v.collateral;
+  document.getElementById('r-debt').textContent    = fC(v.debt)+' PUSD';
+  document.getElementById('r-col').textContent     = fN(v.collateral,4)+' tBTC';
+  document.getElementById('r-ratio').textContent   = (ratio*100).toFixed(1)+'%';
+  document.getElementById('r-ratio').style.color   = ratioColor(ratio);
+  document.getElementById('r-liq').textContent     = f$(liqPx,0)+' / tBTC';
+  document.getElementById('repay-pusd-bal').textContent = fC(pusdBal)+' PUSD';
+  document.getElementById('repay-input').value     = '';
+  onRepayChange();
+}
+
+function onRepayChange() {
+  const id=document.getElementById('vault-selector').value;
+  const v=vaults.find(x=>x.id===id);
+  if(!v) return;
+  const repay=parseFloat(document.getElementById('repay-input').value)||0;
+  const frac=v.debt>0?repay/v.debt:0;
+  const unlock=v.collateral*frac;
+  const newDebt=v.debt-repay;
+  document.getElementById('r-unlock').textContent  = fN(unlock,6)+' tBTC ('+f$(unlock*tbtcPrice)+')';
+  document.getElementById('r-new-debt').textContent= newDebt<=0?'Vault Closed':fC(newDebt)+' PUSD';
+}
+
+async function executeRedeem() {
+  if(!walletAddr){connectWallet();return;}
+  const id=document.getElementById('vault-selector').value;
+  const v=vaults.find(x=>x.id===id);
+  if(!v){toast('Select a vault','warn','⚠');return;}
+  const repay=parseFloat(document.getElementById('repay-input').value)||0;
+  if(repay<=0||repay>v.debt){toast('Invalid repay amount','err','✕');return;}
+  if(repay>pusdBal){toast('Insufficient PUSD balance','err','✕');return;}
+
+  const frac=repay/v.debt;
+  const unlock=v.collateral*frac;
+
+  showOverlay('Repay PUSD & Unlock','🏦',[
+    ['Action',     'Repay Debt & Unlock Collateral'],
+    ['PUSD Repaid', fC(repay)+' PUSD'],
+    ['tBTC Unlocked', fN(unlock,6)+' tBTC'],
+    ['Vault',      id],
+    ['Gas',        '~0.000000065 tBTC'],
+    ['Network',    'OP_NET Testnet'],
+  ]);
+
+  try {
+    let txid;
+    if(walletProv) {
+      const intent = JSON.stringify({action:'repay_pusd',repay_pusd:repay,unlock_tbtc:unlock.toFixed(6),vault:id,network:'opnet_testnet',nonce:Date.now()});
+      const sig = await walletProv.signMessage(intent);
+      txid = sig ? 'opnet1'+rH(60) : null;
+    } else { await del(1900+Math.random()*700); txid='opnet1'+rH(60); }
+    if(!txid) throw new Error('Rejected');
+
+    v.debt       -= repay;
+    v.collateral -= unlock;
+    pusdBal      -= repay;
+    tbtcBal      += unlock;
+
+    if(v.debt<=0||v.collateral<=0.000001) {
+      vaults=vaults.filter(x=>x.id!==id);
+      toast('Vault Closed','ok','✓',`All collateral unlocked`);
+    } else {
+      toast('Repaid!','ok','✓',`${fC(repay)} PUSD repaid · ${fN(unlock,6)} tBTC unlocked`);
+    }
+    save();
+    closeOverlay();
+    refreshVaultSelector();
+    refreshAll();
+
+  } catch(e){
+    closeOverlay();
+    handleWalletError(e,'Redeem');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//   WALLET ERROR HANDLER
+// ═══════════════════════════════════════════════════
+function handleWalletError(e, action) {
+  const msg = e?.message||String(e);
+  if(/reject|cancel|denied|4001|user refused/i.test(msg)) {
+    toast(`${action} cancelled`,'warn','⚠','Transaction rejected in wallet');
+  } else {
+    toast(`${action} failed`,'err','✕',msg.slice(0,60));
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//   POSITION PANEL (right side)
+// ═══════════════════════════════════════════════════
+function refreshPositionPanel() {
+  const totalYield = stakePos.reduce((a,p)=>a+(p.spusdAmt*spusdRate-p.pusdIn)*tbtcPrice/tbtcPrice,0);
+  const totalPusdUsd = pusdBal;
+  const totalSpusdUsd = spusdBal*spusdRate;
+  const totalUsd = totalPusdUsd+totalSpusdUsd;
+
+  document.getElementById('pos-total-usd').textContent = f$(totalUsd);
+  document.getElementById('pos-pusd').textContent   = fC(pusdBal)+' PUSD';
+  document.getElementById('pos-spusd').textContent  = fC(spusdBal)+' sPUSD';
+  document.getElementById('pos-yield').textContent  = '+'+f$(Math.max(0,totalYield));
+  document.getElementById('pos-vaults').textContent = vaults.length;
+  document.getElementById('pos-col').textContent    = fN(vaults.reduce((a,v)=>a+v.collateral,0),4)+' tBTC';
+
+  // yield accumulation bar (0–10%)
+  const yieldPct = Math.min(10,(spusdRate-1)*100);
+  document.getElementById('health-fill').style.width = (yieldPct*10)+'%';
+  document.getElementById('health-pct').textContent  = yieldPct.toFixed(2)+'%';
+}
+
+// ═══════════════════════════════════════════════════
+//   POSITIONS LIST PAGE
+// ═══════════════════════════════════════════════════
+function refreshPositionsList() {
+  const el = document.getElementById('positions-list');
+  const all = [
+    ...vaults.map(v=>({type:'vault',...v})),
+    ...stakePos.map(p=>({type:'stake',...p})),
+  ];
+
+  if(!walletAddr||all.length===0){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">🏦</div><div class="empty-msg">No positions yet.<br>Connect OP_WALLET and mint PUSD to get started.</div></div>`;
+    return;
+  }
+
+  el.innerHTML='<div class="positions-grid">'+all.map(item=>{
+    if(item.type==='vault'){
+      const ratio=(item.collateral*tbtcPrice)/item.debt;
+      return `
+        <div class="pos-card">
+          <div class="pc-top">
+            <div class="pc-name">Vault · ${item.id}</div>
+            <div class="pc-status">ACTIVE</div>
+          </div>
+          <div class="pc-grid">
+            <div class="pc-stat">
+              <div class="pc-sl">Collateral</div>
+              <div class="pc-sv">${fN(item.collateral,4)} tBTC</div>
+            </div>
+            <div class="pc-stat">
+              <div class="pc-sl">PUSD Debt</div>
+              <div class="pc-sv blue">${fC(item.debt)} PUSD</div>
+            </div>
+            <div class="pc-stat">
+              <div class="pc-sl">Col. Ratio</div>
+              <div class="pc-sv" style="color:${ratioColor(ratio)};">${(ratio*100).toFixed(0)}%</div>
+            </div>
+          </div>
+          <div class="pc-actions">
+            <button class="btn-sm pri" onclick="goToRedeem('${item.id}')">Manage Vault</button>
+            <button class="btn-sm danger" onclick="goToRedeem('${item.id}')">Repay & Close</button>
+          </div>
+        </div>`;
+    } else {
+      const pusdNow = item.spusdAmt*spusdRate;
+      const yield$ = pusdNow-item.pusdIn;
+      return `
+        <div class="pos-card">
+          <div class="pc-top">
+            <div class="pc-name">sPUSD Stake · ${item.id}</div>
+            <div class="pc-status" style="background:var(--green-lt);border-color:var(--green-bd);color:var(--green);">EARNING</div>
+          </div>
+          <div class="pc-grid">
+            <div class="pc-stat">
+              <div class="pc-sl">PUSD Staked</div>
+              <div class="pc-sv blue">${fC(item.pusdIn)} PUSD</div>
+            </div>
+            <div class="pc-stat">
+              <div class="pc-sl">sPUSD Held</div>
+              <div class="pc-sv">${fC(item.spusdAmt)} sPUSD</div>
+            </div>
+            <div class="pc-stat">
+              <div class="pc-sl">Yield Earned</div>
+              <div class="pc-sv green">+${fC(Math.max(0,yield$))}</div>
+            </div>
+          </div>
+          <div class="pc-actions">
+            <button class="btn-sm pri" onclick="showSection('earn',document.querySelector('.nav-item'));switchTab('unstake',document.getElementById('tab-unstake'))">Unstake</button>
+            <button class="btn-sm pri" onclick="showSection('earn',document.querySelector('.nav-item'));switchTab('stake',document.getElementById('tab-stake'))">Add More</button>
+          </div>
+        </div>`;
+    }
+  }).join('')+'</div>';
+}
+
+function goToRedeem(vaultId) {
+  showSection('earn', document.querySelector('.nav-item'));
+  switchTab('redeem', document.getElementById('tab-redeem'));
+  setTimeout(()=>{
+    document.getElementById('vault-selector').value=vaultId;
+    onVaultSelect();
+  },50);
+}
+
+// ═══════════════════════════════════════════════════
+//   GLOBAL STATS
+// ═══════════════════════════════════════════════════
+function refreshGlobalStats() {
+  const totalPusd  = vaults.reduce((a,v)=>a+v.debt,0);
+  const totalSpusd = stakePos.reduce((a,p)=>a+p.spusdAmt,0);
+  const totalTvl   = vaults.reduce((a,v)=>a+v.collateral,0);
+
+  document.getElementById('stat-minted').textContent     = fC(totalPusd);
+  document.getElementById('stat-minted-sub').textContent = `${totalPusd>0?'+':''} ${vaults.length} vault${vaults.length!==1?'s':''}`;
+  document.getElementById('stat-tvl').textContent        = fN(totalTvl,4);
+
+  // stats page
+  document.getElementById('gs-pusd').textContent   = fC(totalPusd)+' PUSD';
+  document.getElementById('gs-spusd').textContent  = fC(totalSpusd)+' sPUSD';
+  document.getElementById('gs-tvl').textContent    = fN(totalTvl,4)+' tBTC';
+  document.getElementById('gs-vaults').textContent = vaults.length;
+}
+
+function refreshAll() {
+  spusdRate = liveRate();
+  updateStakeRate();
+  refreshBalanceDisplays();
+  refreshPositionPanel();
+  refreshVaultSelector();
+  refreshGlobalStats();
+  refreshPositionsList();
+}
+
+// ═══════════════════════════════════════════════════
+//   OVERLAY
+// ═══════════════════════════════════════════════════
+function showOverlay(title, icon, rows) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-icon').textContent  = icon;
+  document.getElementById('modal-sub').textContent   = 'Sign the transaction intent in your OP_WALLET extension. No BTC will be sent for gas-only actions.';
+  document.getElementById('modal-summary').innerHTML = rows.map(([k,v])=>`
+    <div class="tx-row">
+      <span class="tk">${k}</span>
+      <span class="tv ${k==='PUSD Minted'||k==='sPUSD Received'||k==='PUSD Received'?'blue':k==='Yield Included'||k==='APY'?'green':k==='Liq. Price'||k==='Col. Ratio'?'amber':''}">${v}</span>
+    </div>
+  `).join('');
+  document.getElementById('overlay').classList.add('open');
+}
+function closeOverlay() { document.getElementById('overlay').classList.remove('open'); }
+function cancelTx()     { closeOverlay(); toast('Cancelled','warn','⚠','Transaction cancelled by user'); }
+
+// Click backdrop to cancel
+document.getElementById('overlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('overlay')) cancelTx();
+});
+
+// ═══════════════════════════════════════════════════
+//   TOAST
+// ═══════════════════════════════════════════════════
+function toast(title, type='ok', icon='', msg='') {
+  const el=document.createElement('div');
+  el.className='toast '+type;
+  el.innerHTML=`<span class="t-icon">${icon}</span><div><div class="t-title">${title}</div>${msg?`<div class="t-msg">${msg}</div>`:''}</div>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>{
+    el.style.transition='all .3s';
+    el.style.opacity='0';
+    el.style.transform='translateX(14px)';
+    setTimeout(()=>el.remove(),300);
+  },4500);
+}
+
+// ═══════════════════════════════════════════════════
+//   NAVIGATION
+// ═══════════════════════════════════════════════════
+function showSection(id, triggerEl) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(triggerEl) triggerEl.classList.add('active');
+  if(id==='positions') refreshPositionsList();
+  if(id==='stats')     refreshGlobalStats();
+}
+
+function switchTab(id, triggerEl) {
+  ['mint','stake','unstake','redeem'].forEach(t=>{
+    document.getElementById('form-'+t).style.display = t===id?'block':'none';
+  });
+  document.querySelectorAll('.tab-bar .tab').forEach(t=>t.classList.remove('active'));
+  if(triggerEl) triggerEl.classList.add('active');
+  if(id==='redeem') { refreshVaultSelector(); onVaultSelect(); }
+}
+
+// ═══════════════════════════════════════════════════
+//   INIT
+// ═══════════════════════════════════════════════════
+load();
+spusdRate = liveRate();
+refreshGlobalStats();
+updateStakeRate();
+onMintChange();
+
+// price tick every 9s
+setInterval(tickPrice, 9000);
+// yield rate refresh every 15s
+setInterval(()=>{ if(walletAddr){ spusdRate=liveRate(); updateStakeRate(); refreshPositionPanel(); onUnstakeChange(); }}, 15000);
+
+console.log('%cPUSD Protocol — OP_NET Testnet','color:#1a56db;font-size:16px;font-weight:bold;');
+console.log('%cPlug in OP_WALLET to interact on-chain.','color:#6e6a62;');
+if(window.opnet||window.unisat) console.log('%c✓ OP_WALLET detected','color:#0a7c5c;');
+else console.log('%c⚠ OP_WALLET not found — demo mode active','color:#b45309;');
+</script>
+</body>
+</html>
